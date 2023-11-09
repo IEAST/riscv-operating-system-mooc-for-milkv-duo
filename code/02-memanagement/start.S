@@ -1,9 +1,9 @@
 #define UART0_THR 0x04140000
 #define UART0_LSR 0x04140014
 
-.equ STACK_SIZE, 16384
-.global _srart
-.text
+    .equ STACK_SIZE, 16384
+    .global _srart
+    .text
 
 _srart:
     csrr t0, mhartid
