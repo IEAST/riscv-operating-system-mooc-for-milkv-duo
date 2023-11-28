@@ -1,22 +1,21 @@
 #ifndef __DRV_USART_H__
 #define __DRV_USART_H__
 
+#define UART_REG_SHIFT 0x2 /* Register Shift*/
+#define UART_INPUT_CLK 25000000
 
-#define UART_REG_SHIFT      0x2  /* Register Shift*/
-#define UART_INPUT_CLK      25000000
+#define UART0_BASE 0x04140000 /*UART0 Address */
+#define UART1_BASE 0x04150000
+#define UART2_BASE 0x04160000
+#define UART3_BASE 0x04170000
+#define UART4_BASE 0x041C0000
 
-#define UART0_BASE          0x04140000 /*UART0 Address */
-#define UART1_BASE          0x04150000
-#define UART2_BASE          0x04160000
-#define UART3_BASE          0x04170000
-#define UART4_BASE          0x041C0000
-
-#define UART_IRQ_BASE       (44)
-#define UART0_IRQ           (UART_IRQ_BASE + 0)
-#define UART1_IRQ           (UART_IRQ_BASE + 1)
-#define UART2_IRQ           (UART_IRQ_BASE + 2)
-#define UART3_IRQ           (UART_IRQ_BASE + 3)
-#define UART4_IRQ           (UART_IRQ_BASE + 4)
+#define UART_IRQ_BASE (44)
+#define UART0_IRQ (UART_IRQ_BASE + 0)
+#define UART1_IRQ (UART_IRQ_BASE + 1)
+#define UART2_IRQ (UART_IRQ_BASE + 2)
+#define UART3_IRQ (UART_IRQ_BASE + 3)
+#define UART4_IRQ (UART_IRQ_BASE + 4)
 
 extern int dw8250_uart_init();
 extern int dw8250_uart_putc(char c);
@@ -38,12 +37,23 @@ extern int dw8250_uart_puts(char *s);
  * #define VIRT_PLIC_SIZE(__num_context) \
  *     (VIRT_PLIC_CONTEXT_BASE + (__num_context) * VIRT_PLIC_CONTEXT_STRIDE)
  */
+/*
+因为 Duo 手册上没有 PLIC 相关的内容，但是 Duo 参考了玄铁 C9006 进行设计，
+寄存器设计参考了C9006 相关手册。
+*/
 #define PLIC_BASE 0x70000000L
 #define PLIC_PRIORITY(id) (PLIC_BASE + (id) * 4)
 #define PLIC_PENDING(id) (PLIC_BASE + 0x1000 + ((id) / 32) * 4)
-#define PLIC_MENABLE(hart) (PLIC_BASE + 0x2000 + (hart) * 0x80)
-#define PLIC_MTHRESHOLD(hart) (PLIC_BASE + 0x200000 + (hart) * 0x1000)
-#define PLIC_MCLAIM(hart) (PLIC_BASE + 0x200004 + (hart) * 0x1000)
-#define PLIC_MCOMPLETE(hart) (PLIC_BASE + 0x200004 + (hart) * 0x1000)
+#define PLIC_MENABLE(id) (PLIC_BASE + 0x2000 + ((id) / 32) * 4)
+#define PLIC_MTHRESHOLD (PLIC_BASE + 0x200000 )
+#define PLIC_MCLAIM (PLIC_BASE + 0x200004)
+#define PLIC_MCOMPLETE (PLIC_BASE + 0x200004)
 
-#endif  /* __DRV_USART_H__ */
+// #define PLIC_PRIORITY(id) (PLIC_BASE + (id) * 4)
+// #define PLIC_PENDING(id) (PLIC_BASE + 0x1000 + ((id) / 32) * 4)
+// #define PLIC_SENABLE(hart, id) (PLIC_BASE + 0x2000 + (hart) * 0x100 + ((id) / 32) * 4)
+// #define PLIC_STHRESHOLD(hart) (PLIC_BASE + 0x200000 + (hart) * 0x2000)
+// #define PLIC_SCLAIM(hart) (PLIC_BASE + 0x200004 + (hart) * 0x2000)
+// #define PLIC_SCOMPLETE(hart) (PLIC_BASE + 0x200004 + (hart) * 0x2000)
+
+#endif /* __DRV_USART_H__ */

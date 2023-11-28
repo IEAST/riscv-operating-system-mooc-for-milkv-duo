@@ -99,6 +99,7 @@ int dw8250_uart_init()
 	dw8250_write32(base, UART_LCR, dw8250_read32(base, UART_LCR) & (~UART_LCR_STOP));
 	dw8250_write32(base, UART_LCR, dw8250_read32(base, UART_LCR) & (~UART_LCR_PARITY));
 
+	// Enable receiver data interrupt
 	dw8250_write32(base, UART_IER, UART_IER_RDI);
 	return 0;
 }
@@ -126,13 +127,9 @@ int dw8250_uart_getc(void)
 {
 	uint32_t base;
 	base = UART0_BASE;
-	if (dw8250_read32(base, UART_LSR) & UART_LSR_DR)
+	if ((dw8250_read32(base, UART_LSR) & UART_LSR_DR))
 	{
-		return dw8250_read32(base, 0);
-	}
-	else
-	{	
-		return -1;
+		return dw8250_read32(base, UART_RX) & 0xff;
 	}
 }
 void dw8250_uart_isr(void)
@@ -140,15 +137,12 @@ void dw8250_uart_isr(void)
 	while (1)
 	{
 		int c = dw8250_uart_getc();
-		if (c == -1)
+		if (c == 0)
 		{
 			break;
-		}
-		else
-		{
+		} else {
 			dw8250_uart_putc((char)c);
 			dw8250_uart_putc('\n');
 		}
-		task_delay(1000);
 	}
 }

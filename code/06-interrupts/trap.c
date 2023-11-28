@@ -12,7 +12,7 @@ void external_interrupt_handler()
 {
 	int irq = plic_claim();
 
-	printf("in external_interrupt_handler \n");
+
 	if (irq == UART0_IRQ){
       		dw8250_uart_isr();
 	} else if (irq) {
@@ -27,19 +27,16 @@ void external_interrupt_handler()
 reg_t trap_handler(reg_t epc, reg_t cause){
 
     reg_t return_pc = epc;
-    reg_t cause_code = cause & 0xfff;
+    reg_t cause_code = cause & 0xffffffff;
 
-	printf("in trap_handler \n");
-    if (cause & 0x80200000) {
+    if (cause & 0x8000000000000000) {
 		/* Asynchronous trap - interrupt */
 		switch (cause_code) {
 		case 3:
 			printf("software interruption!\n");
-			external_interrupt_handler();
 			break;
 		case 7:
 			printf("timer interruption!\n");
-			external_interrupt_handler();
 			break;
 		case 11:
 			printf("external interruption!\n");
@@ -47,14 +44,13 @@ reg_t trap_handler(reg_t epc, reg_t cause){
 			break;
 		default:
 			printf("unknown async exception!\n");
-			external_interrupt_handler();
 			break;
 		}
 	} else {
 		/* Synchronous trap - exception */
 		printf("Sync exceptions!, code = %d\n", cause_code);
 		panic("OOPS! What can I do!");
-		// return_pc += 2;
+		// return_pc += 4;
 	}
 	return return_pc;
 }
