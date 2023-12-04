@@ -49,12 +49,20 @@ extern int dw8250_uart_puts(char *s);
 #define PLIC_MCLAIM (PLIC_BASE + 0x200004)
 #define PLIC_MCOMPLETE (PLIC_BASE + 0x200004)
 
-// 具体参照芯片手册定时器的章节
-#define CLINT_BASE 0x74000000
-#define CLINT_MSIP (CLINT_BASE)
-#define CLINT_MTIMECMP (CLINT_BASE + 0x4000 )
-#define CLINT_MTIME  (CLINT_BASE + 0xBFF8)
+// 具体参照芯片手册定时器的章节,在 cv1800b 中，无法通过读取寄存器直接获取 mtime ,需要通过 rtime 来获取。
 
+#ifdef QEMU
+#define CLINT_BASE 0x74000000L
+#define CLINT_MTIMECMPL0 (CLINT_BASE + 0x4000)
+#define CLINT_MTIMECMPH0 (CLINT_BASE + 0x4004)
+#define CLINT_MTIME (CLINT_BASE + 0xBFF8) // cycles since boot.
+#define CLINT_TIMEBASE_FREQ 10000000
+
+#else
+#define CLINT_BASE 0x74000000L
+#define CLINT_MTIMECMPL0 (CLINT_BASE + 0x4000 )
+#define CLINT_MTIMECMPH0 (CLINT_BASE + 0x4004 )
 #define CLINT_TIMEBASE_FREQ 25000000
+#endif
 
 #endif /* __DRV_USART_H__ */

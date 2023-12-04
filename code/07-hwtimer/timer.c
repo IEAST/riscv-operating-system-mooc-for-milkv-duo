@@ -6,21 +6,22 @@ static uint64_t _tick = 0;
 
 void timer_load(int interval)
 {
-	/* each CPU has a separate source of timer interrupts. */
-	
-	*(uint64_t*)CLINT_MTIMECMP= (*(uint64_t*)CLINT_MTIME + interval);
+
+    #ifdef QEMU
+    uint64_t time = *(uint64_t*)(CLINT_MTIME + interval)
+    #else
+    uint64_t time = r_time()+interval;
+    #endif
+    
+	*(uint32_t*)CLINT_MTIMECMPL0 = (time & 0xffffffff);
+    *(uint32_t*)CLINT_MTIMECMPH0 = (time >> 32) & 0xffffffff;
 }
 
 void timer_init(){
 
-    printf("time init\n");
-
     timer_load(TIMER_INTERVAL);
-    printf("time init 2\n");
     w_mie(r_mie() | MIE_MTIE);
-    printf("time init 3\n");
     w_mstatus(r_mstatus() | MSTATUS_MIE);
-    printf("time init 4\n");
 }
 
 void timer_handler() 
