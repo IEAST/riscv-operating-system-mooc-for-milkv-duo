@@ -86,7 +86,7 @@ int dw8250_uart_init()
 	/* Clear RTS */
 	dw8250_write32(base, UART_MCR, dw8250_read32(base, UART_MCR) | UART_MCR_RTS);
 
-	rate = UART_INPUT_CLK / 16 / 117200;
+	rate = UART_INPUT_CLK / 16 / 115200;
 
 	/* Enable access DLL & DLH */
 	dw8250_write32(base, UART_LCR, dw8250_read32(base, UART_LCR) | UART_LCR_DLAB);

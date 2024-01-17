@@ -10,4 +10,7 @@ void start_kernel(void)
     dw8250_uart_putc('o');
     dw8250_uart_putc('\n');
     dw8250_uart_puts("Hello, RVOS!\n");
+
+    while (1){};
+    
 }
