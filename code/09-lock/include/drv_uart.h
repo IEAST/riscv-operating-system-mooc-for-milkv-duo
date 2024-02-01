@@ -55,8 +55,7 @@ extern int dw8250_uart_puts(char *s);
 
 #define CLINT_BASE 0x74000000L
 #define CLINT_MSIP(hartid) (CLINT_BASE + 4 * (hartid))
-#define CLINT_MTIMECMPL(hartid) (CLINT_BASE + 0x4000 + 8 * (hartid))
-#define CLINT_MTIMECMPH(hartid) (CLINT_BASE + 0x4004 + 8 * (hartid))
+#define CLINT_MTIMECMP(hartid) (CLINT_BASE + 0x4000 + 8 * (hartid))
 #define CLINT_MTIME (CLINT_BASE + 0xBFF8) // cycles since boot.
 #define CLINT_TIMEBASE_FREQ 10000000
 
